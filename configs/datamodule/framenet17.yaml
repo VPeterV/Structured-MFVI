@@ -1,0 +1,39 @@
+# @package _global_
+
+defaults:
+  - _base
+
+datamodule:
+  target:
+    _target_: src.datamodules.datasets.framenerloader.FrameNetDataLoader
+  dataidx: 0
+  context_window: 0
+  train: "${root}/data/framenet/preprocessed-fn1.7/train.json"
+  dev: "${root}/data/framenet/preprocessed-fn1.7/dev.json"
+  test: "${root}/data/framenet/preprocessed-fn1.7/test.json"
+  cache: "${root}/data/framenet/preprocessed-fn1.7/cache.pickle"
+  cache_bert: "${root}/data/framenet/preprocessed-fn1.7/bert_cache.pickle"
+  ontology_path: "${root}/data/framenet/fndata-1.7"
+  # ext_emb_path: "${root}/data/ptb/glove.6B.100d.txt"
+  use_bert: True
+  use_cache: True # debug: False
+  use_bert_cache: True
+  clean_word: False
+  bert: 'bert-base-cased'
+  name: 'framenet1.7'
+  batch_size: 16
+  golden_predicate: False
+  masked_inside: False
+  fencepost: False
+  # max_len: 100
+
+# model:
+#   metric:
+#     target:
+#       _target_: src.model.metric.NERMetric
+#     write_result_to_file: True
+
+
+
+
+

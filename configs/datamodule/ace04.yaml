@@ -1,0 +1,34 @@
+# @package _global_
+
+defaults:
+  - _base
+
+datamodule:
+  target:
+    _target_: src.datamodules.datasets.acedataloader.ACEDataLoader
+  dataidx: 0
+  context_window: 0
+  train: "${root}/data/ace04/train/"
+  dev: "${root}/data/ace04/dev/"
+  test: "${root}/data/ace04/test/"
+  cache: "${root}/data/ace04/ace04.pickle"
+  cache_bert: "${root}/data/ace04/ace04.cache_bert"
+  # ext_emb_path: "${root}/data/ptb/glove.6B.100d.txt"
+  use_cache: True # debug: False
+  use_bert_cache: True
+  clean_word: False
+  bert: 'bert-base-uncased'
+  name: 'ace04'
+  batch_size: 16
+  # max_len: 100
+
+# model:
+#   metric:
+#     target:
+#       _target_: src.model.metric.NERMetric
+#     write_result_to_file: True
+
+
+
+
+

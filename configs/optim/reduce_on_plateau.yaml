@@ -1,0 +1,10 @@
+beta1: 0.9
+beta2: 0.9
+eps: 1e-12
+lr: 5e-5
+lr_rate: 50
+scheduler_type: 'reduce_on_plateau'
+only_embeder: True
+num_cycles: 1
+factor: 0.5
+patience: 4

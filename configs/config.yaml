@@ -1,0 +1,89 @@
+# @package _global_
+
+# specify here default training configuration
+defaults:
+  - _self_
+  - trainer: default.yaml
+  - model: _base.yaml
+  - datamodule: conll05-wsj.yaml
+  - optim: exponential.yaml
+  - runner: default.yaml
+#   - callbacks: default.yaml
+  - logger: csv # set logger here or use command line (e.g. `python run.py logger=wandb`)
+  # - mode: default.yaml
+  - experiment: null
+  - hparams_search: null
+
+  # enable color logging
+  - override hydra/hydra_logging: colorlog
+  - override hydra/job_logging: colorlog
+  
+# runner:
+#     _target_: src.runner.span_runner.SpanRunner
+model_type: phpt
+evaluate_path: None
+check: True
+mixed_precision: False
+wandb: False
+checkpoint: True
+checkpoint_path: 'checkpoints'
+device: 0
+seed: 0
+accumulation: 1
+patience: 0
+use_logger: False
+distributed: False
+debug: False
+version: 'default'
+framenet_mode: 'span'
+
+task: srl
+root: "."
+suffix: ""
+# path to original working directory
+# hydra hijacks working directory by changing it to the current log directory,
+# so it's useful to have this path as a special variable
+# https://hydra.cc/docs/next/tutorials/basic/running_your_app/working_directory
+# run_dir: ${hydra:runtime.cwd}
+# store_dir: ${hydra:runtime.cwd}/experiment/${datamodule.name}_${datamodule.bert}/${model.name}/${now:%Y-%m-%d}-${now:%H-%M-%S}-seed-${seed}
+work_dir: ${hydra:runtime.cwd}/experiment/${now:%m-%d}_${version}/${datamodule.name}_dataidx${datamodule.dataidx}_withprd${model.task.wprd}_${datamodule.bert}/${model.name}/lr${optim.lr}/${now:%Y-%m-%d}-${now:%H-%M-%S}-seed-${seed}
+
+callbacks:
+  pretty_progress_bar:
+    _target_: src.callbacks.progressbar.PrettyProgressBar
+    refresh_rate: 1
+    process_position: 0
+
+hydra:
+    run:
+        dir:  ${work_dir}
+    sweep:
+        dir: logs/multiruns/experiment/${version}/${datamodule.name}_${datamodule.bert}/${model.name}/ft${model.embeddings.finetune}-lr${optim.lr}/${now:%Y-%m-%d}-${now:%H-%M-%S}-seed-${seed}
+        subdir: ${hydra.job.num}
+    job:
+        env_set:
+            WANDB_CONSOLE: 'off'
+    # verbose: True
+        # chdir: True
+    # output_subdir: ${store_dir}/hydra
+    # job_logging:
+    #     dir: ${work_dir}
+# path to folder with data
+# data_dir: ${work_dir}/data/
+
+# pretty print config at the start of the run using Rich library
+# print_config: True
+
+# disable python warnings if they annoy you
+# ignore_warnings: True
+
+# evaluate on test set, using best model weights achieved during training
+# lightning chooses best weights based on metric specified in checkpoint callback
+# test_after_training: True
+
+# seed for random number generators in pytorch, numpy and python.random
+# seed: null
+
+# name of the run is accessed by loggers
+# should be used along with experiment mode
+# name: null

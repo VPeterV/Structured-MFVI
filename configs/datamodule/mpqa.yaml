@@ -1,0 +1,38 @@
+# @package _global_
+
+defaults:
+  - _base
+
+datamodule:
+  target:
+    _target_: src.datamodules.datasets.mpqaloader.MPQADataLoader
+  dataidx: 0
+  context_window: 0
+  train: "${root}/data/opinion_mining_json/json_format/{datamodule.dataidx}/aaai19srl.train{datamodule.dataidx}.conll.json"
+  dev: "${root}/data/opinion_mining_json/json_format/{datamodule.dataidx}/aaai19srl.dev{datamodule.dataidx}.conll.json"
+  test: "${root}/data/opinion_mining_json/json_format/{datamodule.dataidx}/aaai19srl.test{datamodule.dataidx}.conll.json"
+  cache: "${root}/data/opinion_mining_json/json_format/{datamodule.dataidx}/cache.pickle"
+  cache_bert: "${root}/data/opinion_mining_json/json_format/{datamodule.dataidx}/bert_cache.pickle"
+  # ext_emb_path: "${root}/data/ptb/glove.6B.100d.txt"
+  use_bert: True
+  use_cache: True # debug: False
+  use_bert_cache: True
+  clean_word: False
+  bert: 'bert-base-cased'
+  name: 'mpqa'
+  batch_size: 16
+  golden_predicate: False
+  masked_inside: False
+  fencepost: True
+  # max_len: 100
+
+# model:
+#   metric:
+#     target:
+#       _target_: src.model.metric.NERMetric
+#     write_result_to_file: True
+
+
+
+
+

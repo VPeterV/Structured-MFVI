@@ -1,0 +1,96 @@
+# @package _global_
+
+model:
+  name: 'span_srl'
+  target:
+    _target_: src.models.srlmodel.SRLModel
+    
+  task:
+    wprd: False
+
+  decoder:
+    target:
+      _target_: src.models.decoder.Decoder
+    threshold: 0.5
+      
+  embeddings:
+    target:
+      _target_: src.model.modules.embeddings.plmembedding.Embedding
+
+    #pos
+    # n_pos_embed: 100
+    #char
+    # n_char_embed: 50
+    # n_char_out: 100
+    # char_input_dropout: 0.
+    # bert
+    n_bert_out: 768
+    n_bert_layers: 0
+    mix_dropout: 0.
+    finetune: True
+    pooling: mean
+    #word
+    n_embed: 300
+    ind_emb: 100
+    # char emb
+    n_char_emb: 50
+    n_char_hidden: 100
+    n_char_feat_embed: 100
+    char_dropout: 0.
+    # lemma emb
+    lemma_emb: 100
+
+  encoder:
+    target:
+      _target_: src.model.module.encoder.lstm_encoder.LSTMencoder
+    # emb_dropout: .33
+    emb_dropout: 0.
+    emb_dropout_type: vanilla
+    lstm_dropout_type: vanilla
+    # lstm_dropout: .25
+    lstm_dropout: 0.
+    n_lstm_hidden: 500
+    n_lstm_layers: 3
+    before_lstm_dropout: 0.
+    # before_lstm_dropout: 0.
+    bilstm: True
+
+  foscorer:
+    target:
+      _target_: src.model.modules.scorer.affine.FirstOrderScorer
+    n_out: 2
+    biaffine_dim: 300
+    biaffine_label_dim: 500
+    arc_mlp_dropout: .25
+    # arc_mlp_dropout: 0.
+    label_mlp_dropout: .25
+    # label_mlp_dropout: 0.
+    scaling: False
+    
+  soscorer:
+      target:
+        _target_: src.model.modules.scorer.affine.SecondOrderScorer
+      n_out: 2
+      triaffine_dim: 150
+      mlp_dropout: .25
+      # mlp_dropout: 0.
+      scaling: False
+      split: True
+  
+  loss:
+    lamb: 0.025
+    solamb: 1
+  
+  metric:
+      write_result_to_file: True
+      script_path: './data/srlconll-1.1'
+      target:
+        _target_: src.models.srlmetric.SpanSRLMetric
+
+
+
+
+
+
+
+

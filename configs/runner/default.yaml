@@ -1,0 +1,4 @@
+# @package _global_
+
+runner:
+    _target_: src.runner.srl_runner.SRLRunner

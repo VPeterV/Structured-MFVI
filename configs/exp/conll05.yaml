@@ -1,0 +1,73 @@
+# @package _global_
+
+defaults:
+  - override /model: 2stagetreecrf-2o
+  - override /trainer: default
+  - override /optim: finetune_bert
+
+version: structured-mfvi
+
+datamodule:
+  bert: 'bert-large-cased'
+  masked_inside: True
+  max_tokens: 1000
+  fix_len: 20
+  sort_by_subwords: False
+  
+model:
+  name: '2stage_treecrf_span_srl_treecrf_2ost_fos${model.foscorer.split}_dps${model.decoder.scoring}_warmup${optim.warmup}_treem${model.mfvi.treemarginal}_maxepochs${trainer.max_epochs}_mf${model.mfvi.max_iter}_mftest${model.mfvi.max_iter_decode}_bertdp${model.encoder.bert_dropout}_lstmlyrs${model.encoder.n_lstm_layers}_brtlyrs${model.embeddings.n_bert_layers}_lamb${model.loss.lamb}_span_lamb${model.loss.span_lamb}_lr${optim.lr}_lrrate${optim.lr_rate}_arcdp${model.foscorer.arc_mlp_dropout}_arcinit${model.foscorer.arc_init}'
+  target:
+    _target_: src.models.srlmodel-treecrf-2o.SRLModel
+  embeddings:
+    finetune: True
+    n_bert_layers: 4
+    n_bert_out: 4096
+    
+  encoder:
+    n_lstm_layers: 0
+    bert_dropout: 0.1
+    
+  decoder:
+    target:
+      _target_: src.models.decoders.dp.decoder.Decoder
+    threshold: 0.5
+    mbr: False
+    mode: 'span_repr'
+    # scoring: pIhIt
+    
+  foscorer:
+    span_n_out: 2
+    biaffine_dim: 500
+    arc_mlp_dropout: 0.1
+    label_mlp_dropout: 0.1
+    arc_init: "zero"
+    label_init: "zero"
+    split: "a"
+    
+  soscorer:
+    triaffine_dim: 100
+    mlp_dropout: 0.1
+    
+  loss:
+    lamb: 0.06
+    solamb: 0
+    span_lamb: 0.1
+    
+  mfvi:
+    treemarginal: True
+    structured: True
+    max_iter: 5
+    max_iter_decode: 5
+    score_types: 'pIsIc'
+    
+  treecrf:
+    potential_norm: True
+
+trainer:
+  max_epochs: 25
+  
+optim:
+  warmup: 0.1
+  lr: 2e-5
+  lr_rate: 50
+  scheduler_type: "linear_warmup"
